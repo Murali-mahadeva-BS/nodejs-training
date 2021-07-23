@@ -1,32 +1,14 @@
-const path = require("path");
-const fs = require("fs");
+const express = require("express");
+const ejs = require("ejs");
+const app = express();
 
-// path module
-// let temp = path.join(__dirname, "some", "someting", "some.txt");
-// console.log("path: ", temp);
-// let temp = path.resolve("some", "something"); console.log("path:", temp);
-// console.log("abosule path:", __dirname);
+app.set("view engine", "ejs");
+// app.set("views", __dirname + "/pages");
+app.use(express.static("public"));
 
-// fs module
-// reading from a file
-// fs.readFile("test.txt", (err, data) => {
-//   if (err) return console.log("Error in reading file");
-//   console.log("data:", data.toString());
-// });
+app.get("/", (req, res) => {
+  res.render("index");
+  res.end();
+});
 
-// writing to a file
-// fs.writeFile("test.txt", "hello ", (err) => {
-//   if (err) return console.log("Error in writng file");
-// });
-
-// appending data to file
-// fs.appendFile("test.txt", "hello ", (err) => {
-//   if (err) return console.log("Error in appending file");
-//   console.log("file appended succesfully");
-// });
-
-// delete file
-// fs.unlink("test.txt", (err) => {
-//   if (err) return console.log("Error in deleting file");
-//   console.log("file deleted succesfully");
-// });
+app.listen(8080, () => console.log("server is listenig on port:", 8080));
