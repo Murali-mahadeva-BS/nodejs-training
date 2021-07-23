@@ -1,8 +1,9 @@
-const http = require("http");
-http
-  .createServer((req, res) => {
-    res.write("hello people");
-    res.end();
-  })
-  .listen(8080);
-console.log("Server listening on port :", 8080);
+const express = require("express");
+const app = express();
+
+app.get("/", (req, res) => {
+  res.write("hello world ");
+  res.end();
+});
+
+app.listen(8080, () => console.log("server listening on port:", 8080));
