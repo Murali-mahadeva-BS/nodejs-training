@@ -10,17 +10,18 @@
   <body>
     <div class="container">
       <div>
-        <img
-          src="media/node.png"
-          alt="node-logo"
-          width="200"
-          height="auto"
-        />
-        <h2 style="margin: 5px">Counter example</h2>
-        <h1 id="counter">0</h4>
-        <button id="counter-btn">Increment</button>
+        <h1 style="text-align: center">Todos</h1>
+        <form action="/" method="POST" style="margin: 5px">
+          <input
+            type="text"
+            id="todo-input"
+            placeholder="enter the todo"
+            name="todo"
+          />
+          <input type="submit" value="Submit" />
+        </form>
       </div>
     </div>
-<script src="js/index.js"></script>
+    <script src="js/index.js"></script>
   </body>
 </html>
