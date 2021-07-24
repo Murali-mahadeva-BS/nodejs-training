@@ -20,6 +20,13 @@
           />
           <input type="submit" value="Submit" />
         </form>
+        <div>
+          <% todos.length && todos.map(todo =>{%>
+          <ul>
+            <%=todo%>
+          </ul>
+          <%}) %>
+        </div>
       </div>
     </div>
     <script src="js/index.js"></script>
