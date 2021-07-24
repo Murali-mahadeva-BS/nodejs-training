@@ -1,19 +1,29 @@
 const express = require("express");
-const ejs = require("ejs");
 const app = express();
+const formidable = require("formidable");
+const fs = require("fs");
+const path = require("path");
+
 app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(express.static("public"));
-let todos = [];
+
 app.get("/", (req, res) => {
-  res.render("todo", { todos });
+  res.render("mediaupload");
   res.end();
 });
-app.post("/", (req, res) => {
-  let { body } = req;
-  console.log("body from html:", body);
-  todos.push(body.todo);
-  console.log("todos:", todos);
-  res.redirect("/");
+
+app.post("/upload", (req, res) => {
+  let form = new formidable.IncomingForm();
+  form.parse(req, (err, fields, files) => {
+    if (err) return console.log("Error in parsing formdata");
+    var oldpath = files.files.path;
+    var newpath = path.resolve("media", files.files.name);
+    fs.rename(oldpath, newpath, (err) => {
+      if (err) return console.log("Error in saving file");
+      console.log("File uploaded succesfully");
+      res.redirect("/");
+    });
+  });
 });
 app.listen(8080, () => console.log("listening on port 8080"));
