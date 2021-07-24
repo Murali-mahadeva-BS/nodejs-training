@@ -27,3 +27,30 @@ app.post("/upload", (req, res) => {
   });
 });
 app.listen(8080, () => console.log("listening on port 8080"));
+
+// {
+//     "id":1,
+//     "name":"murlai",
+//     'password':'dljkflkd',
+//     "books":[
+//         {
+//             "id":1,
+//             "name":'name',
+//             "author_id":2
+//         },
+//         {
+//             "id":1,
+//             "name":'name',
+//             "author_id":2
+//         },
+
+//     ]
+// }
+
+// nodejs - server1
+// postgres db - server2
+
+// nodejs - server1
+// mongodb db - server2
+// mongodb db - server3
+// mongodb db - server4
