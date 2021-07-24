@@ -2,12 +2,11 @@ const express = require("express");
 const app = express();
 const path = require("path");
 app.use(express.urlencoded({ extended: true }));
-app.set("view engine", "ejs");
 app.use(express.static("public"));
 let todos = [];
 
 app.get("/", (req, res) => {
-  res.render(path.resolve("views", "todo.html"));
+  res.sendFile(path.resolve("views", "todo.html"));
 });
 
 app.post("/", (req, res) => {
