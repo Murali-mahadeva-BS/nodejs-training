@@ -3,9 +3,11 @@ const express = require("express");
 const helment = require("helmet");
 const cors = require("cors");
 const morgan = require("morgan");
-const { Todo, sequelize } = require("./models");
 const app = express();
+const mongoose = require("mongoose");
+const Todo = require("./models/todoModel");
 const PORT = process.env.PORT;
+const MONGODB_URI = process.env.MONGODB_URI;
 
 app.use(cors({ origin: `http://localhost:${PORT}` }));
 app.use(helment());
@@ -15,7 +17,7 @@ app.use(morgan("dev"));
 
 app.get("/todos", async (req, res) => {
   try {
-    let todos = await Todo.findAll();
+    let todos = await Todo.find();
     res.status(200).json({
       isSuccesful: true,
       items: todos,
@@ -29,28 +31,10 @@ app.get("/todos", async (req, res) => {
   }
 });
 
-app.post("/todos", async (req, res) => {
-  let { title } = req.body;
-  try {
-    let todo = await Todo.create({ title });
-    console.log("Newly created todo:", todo);
-    res.status(200).json({
-      isSuccesful: true,
-      item: todo,
-    });
-  } catch (error) {
-    console.log("Error in creating todo");
-    res.status(500).json({
-      isSuccesful: false,
-      error,
-    });
-  }
-});
-
 app.get("/todos/:id", async (req, res) => {
   let { id } = req.params;
   try {
-    let todo = await Todo.findOne({ where: { id } });
+    let todo = await Todo.findById(id);
     res.status(200).json({
       isSuccesful: true,
       item: todo,
@@ -64,17 +48,27 @@ app.get("/todos/:id", async (req, res) => {
   }
 });
 
-app.put("/todos/:id", async (req, res) => {
-  let { id } = req.params;
-  let { title } = req.body;
+app.post("/todos", async (req, res) => {
   try {
-    let todo = await Todo.update({ title }, { where: { id } });
-    res.status(200).json({
-      isSuccesful: true,
-      item: todo,
-    });
+    let todo = await new Todo(req.body);
+    todo
+      .save()
+      .then(() => {
+        console.log("Newly created todo:", todo);
+        res.status(200).json({
+          isSuccesful: true,
+          item: todo,
+        });
+      })
+      .catch((err) => {
+        console.log("Error in creating new todo");
+        res.status(500).json({
+          isSuccesful: false,
+          error,
+        });
+      });
   } catch (error) {
-    console.log("Error in updating the todo");
+    console.log("Error in creating todo");
     res.status(500).json({
       isSuccesful: false,
       error,
@@ -85,7 +79,7 @@ app.put("/todos/:id", async (req, res) => {
 app.delete("/todos/:id", async (req, res) => {
   let { id } = req.params;
   try {
-    let todo = await Todo.destroy({ where: { id } });
+    let todo = await Todo.findByIdAndDelete(id);
     res.status(200).json({
       isSuccesful: true,
       item: todo,
@@ -99,12 +93,33 @@ app.delete("/todos/:id", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  sequelize
-    .authenticate()
-    .then(() => {
-      console.log("connected to database");
-      console.log("listenign on port: ", PORT);
-    })
-    .catch((err) => console.log("Error in connecting to database"));
+app.put("/todos/:id", async (req, res) => {
+  let { id } = req.params;
+  let { title } = req.body;
+  try {
+    let todo = await Todo.findByIdAndUpdate({ _id: id }, req.body, {
+      new: true,
+    });
+    res.status(200).json({
+      isSuccesful: true,
+      item: todo,
+    });
+  } catch (error) {
+    console.log("Error in updating the todo");
+    res.status(500).json({
+      isSuccesful: false,
+      error,
+    });
+  }
 });
+
+mongoose
+  .connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then((result) => {
+    console.log("Connected to database");
+    app.listen(PORT, () => console.log(`listening on ${PORT} `));
+  })
+  .catch((err) => console.log("Error in DB connection:", err));
